@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miami Getaway: Interactive Itinerary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Sunset Drive -->
+    <!-- Application Structure Plan: The application is structured as a single-page application with a tabbed navigation interface. A persistent top navigation bar contains buttons for each day of the trip. Clicking a day button dynamically displays that day's itinerary in the main content area below, hiding all other days. This structure was chosen because it allows users to quickly access the schedule for any specific day without scrolling through a long, linear document, which is ideal for a multi-day travel plan. The user flow is simple: open the app, see the first day, and click to navigate to any other day instantly. This is far more usable on mobile devices than a static document. -->
+    <!-- Visualization & Content Choices: The itinerary is presented as a series of timeline-style cards for each day. Goal: Organize and Inform. Method: Each event is a distinct card with a time, title, description, and an external link, visually separated by vertical lines and icons (Unicode emojis). Interaction: The primary interaction is the tabbed navigation powered by JavaScript to toggle the visibility of content sections. Justification: This card-based timeline is clearer and more scannable than plain text. It breaks down the day into manageable chunks. Using simple JS for navigation is efficient and creates a seamless user experience without needing complex libraries. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F7F4;
+            color: #4A4A4A;
+        }
+        .nav-button {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .nav-button.active {
+            border-bottom-color: #FF6B6B;
+            color: #1A1A1A;
+            font-weight: 600;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 1.25rem;
+            top: 1.25rem;
+            bottom: -1.25rem;
+            width: 2px;
+            background-color: #E0E0E0;
+            transform: translateX(-50%);
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-icon {
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto max-w-5xl p-4 sm:p-6 md:p-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800">🌴 Miami Getaway</h1>
+            <p class="text-lg text-gray-500 mt-2">The Ultimate Boys' Trip: Sep 5th - 12th</p>
+        </header>
+
+        <nav id="itinerary-nav" class="bg-white/80 backdrop-blur-sm sticky top-0 z-20 mb-8 rounded-xl shadow-sm overflow-x-auto">
+            <div class="flex items-center justify-center space-x-2 sm:space-x-4 p-3 min-w-max">
+                <button data-target="day1" class="nav-button active text-sm sm:text-base px-3 py-2">Fri, Sep 5</button>
+                <button data-target="day2" class="nav-button text-sm sm:text-base px-3 py-2">Sat, Sep 6</button>
+                <button data-target="day3" class="nav-button text-sm sm:text-base px-3 py-2">Sun, Sep 7</button>
+                <button data-target="day4" class="nav-button text-sm sm:text-base px-3 py-2">Mon, Sep 8</button>
+                <button data-target="day5" class="nav-button text-sm sm:text-base px-3 py-2">Tue, Sep 9</button>
+                <button data-target="day6" class="nav-button text-sm sm:text-base px-3 py-2">Wed, Sep 10</button>
+                <button data-target="day7" class="nav-button text-sm sm:text-base px-3 py-2">Thu, Sep 11</button>
+                <button data-target="day8" class="nav-button text-sm sm:text-base px-3 py-2">Fri, Sep 12</button>
+            </div>
+        </nav>
+
+        <main id="itinerary-content">
+            <div class="text-center p-4 bg-white rounded-lg shadow-sm mb-8 border border-gray-200">
+                <p class="text-gray-600">Welcome to your interactive trip planner! Click on a date above to see the detailed schedule for that day. Each event card provides key details and links for easy navigation.</p>
+            </div>
+
+            <!-- Day 1: Friday, Sep 5 -->
+            <div id="day1" class="day-content space-y-8">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-700">Day 1: Welcome to Miami! ☀️</h2>
+                    <p class="text-md text-gray-500">Friday, September 5th</p>
+                </div>
+                <div class="relative">
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">✈️</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">10:00 AM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Arrival & Car Rental</h3>
+                            <p class="text-gray-600 mt-2">Arrive at <a href="https://maps.app.goo.gl/uB1y9C4A2y1WmsHY7" target="_blank" class="text-blue-500 hover:underline">Miami International Airport (MIA)</a>, pick up your rental car, and get ready to kick things off.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🌮</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">12:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Lunch & Check-in</h3>
+                            <p class="text-gray-600 mt-2">Grab a casual lunch and head to your first Airbnb to settle in and drop your bags.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🏊</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">2:00 PM - 4:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Relax & Recharge</h3>
+                            <p class="text-gray-600 mt-2">Leisurely break. Unpack, relax, and recharge by the pool.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🏖️</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">4:00 PM onwards</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">South Beach Exploration</h3>
+                            <p class="text-gray-600 mt-2">Drive over to the world-famous <a href="https://maps.app.goo.gl/9eB8k1oB4DCRuS3d6" target="_blank" class="text-blue-500 hover:underline">South Beach</a>. Stroll down Ocean Drive and enjoy the vibrant atmosphere.</p>
+                        </div>
+                    </div>
+                     <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🍽️</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">8:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Dinner in SoBe</h3>
+                            <p class="text-gray-600 mt-2">Enjoy dinner at a lively spot in South Beach.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🍹</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">10:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Nightlife Kick-off</h3>
+                            <p class="text-gray-600 mt-2">Experience your first taste of Miami nightlife at a cool lounge like <a href="https://maps.app.goo.gl/Y4o8MvXbS2gWfG3L8" target="_blank" class="text-blue-500 hover:underline">The Clevelander</a>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 2: Saturday, Sep 6 -->
+            <div id="day2" class="day-content space-y-8 hidden">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-700">Day 2: Gators & Cuban Rhythms 🐊</h2>
+                    <p class="text-md text-gray-500">Saturday, September 6th</p>
+                </div>
+                 <div class="relative">
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🚤</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">9:00 AM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Everglades Airboat Adventure</h3>
+                            <p class="text-gray-600 mt-2">Head out for an exhilarating <a href="https://www.evergladestour.com/" target="_blank" class="text-blue-500 hover:underline">Everglades Airboat Tour</a>. Experience the unique ecosystem and see alligators. Book in advance!</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🍴</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">1:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Lunch</h3>
+                            <p class="text-gray-600 mt-2">Grab a bite near the Everglades or on your way back to the city.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">😴</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">2:30 PM - 5:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Afternoon Siesta</h3>
+                            <p class="text-gray-600 mt-2">A well-deserved break and downtime at your Airbnb.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🇨🇺</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">5:30 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Little Havana Immersion</h3>
+                            <p class="text-gray-600 mt-2">Make your way to the vibrant Cuban heart of Miami, <a href="https://maps.app.goo.gl/B46zWz3s6v75g7L49" target="_blank" class="text-blue-500 hover:underline">Little Havana</a>. Walk down Calle Ocho and soak in the rich culture.</p>
+                        </div>
+                    </div>
+                     <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🥘</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">8:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Authentic Cuban Dinner</h3>
+                            <p class="text-gray-600 mt-2">Have a memorable dinner at the legendary <a href="https://maps.app.goo.gl/rD984j1pWb3g8ZcQ9" target="_blank" class="text-blue-500 hover:underline">Versailles Restaurant</a>.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">💃</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">10:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Salsa & Mojitos</h3>
+                            <p class="text-gray-600 mt-2">Head to <a href="https://maps.app.goo.gl/f7hU88bM14U4sQ1Q7" target="_blank" class="text-blue-500 hover:underline">Ball & Chain</a> for live music, incredible mojitos, and dancing.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 3: Sunday, Sep 7 -->
+            <div id="day3" class="day-content space-y-8 hidden">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-700">Day 3: Nakul's Birthday Celebration! 🎂🍾</h2>
+                    <p class="text-md text-gray-500">Sunday, September 7th</p>
+                </div>
+                <div class="relative">
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🎉</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">Morning</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Happy Birthday, Nakul!</h3>
+                            <p class="text-gray-600 mt-2">Enjoy a relaxed morning. Grab a celebratory brunch in a trendy neighborhood like Wynwood or Brickell.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🛥️</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border-2 border-yellow-400">
+                            <p class="text-sm font-semibold text-gray-500">1:00 PM - 5:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Private Yacht Party on Biscayne Bay</h3>
+                            <p class="text-gray-600 mt-2">The main event! Charter a private yacht for an unforgettable afternoon on <a href="https://maps.app.goo.gl/iXvK8kX9m8T3iFzMA" target="_blank" class="text-blue-500 hover:underline">Biscayne Bay</a>. Party in style!</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🥂</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">5:00 PM - 8:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Relax & Get Ready</h3>
+                            <p class="text-gray-600 mt-2">Head back to the Airbnb to relax and get dressed for a big night out.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🥩</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">8:30 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Birthday Dinner</h3>
+                            <p class="text-gray-600 mt-2">A high-end birthday dinner at a top-tier restaurant like <a href="https://maps.app.goo.gl/L9P7hP3H3e4R7L3z7" target="_blank" class="text-blue-500 hover:underline">Papi Steak</a> or <a href="https://maps.app.goo.gl/6p5QeW38T7eQhUaFA" target="_blank" class="text-blue-500 hover:underline">Komodo</a>.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🕺</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">11:30 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">LIV Nightclub</h3>
+                            <p class="text-gray-600 mt-2">Experience one of the world's most famous clubs. Head to <a href="https://maps.app.goo.gl/eG55F8bE5K3793e87" target="_blank" class="text-blue-500 hover:underline">LIV Miami</a>. Secure tickets or a table in advance!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 4: Monday, Sep 8 -->
+            <div id="day4" class="day-content space-y-8 hidden">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-700">Day 4: The Great Florida Keys Road Trip 🚗</h2>
+                    <p class="text-md text-gray-500">Monday, September 8th</p>
+                </div>
+                <div class="relative">
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🌅</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">7:00 AM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Early Start to Key West</h3>
+                            <p class="text-gray-600 mt-2">Pack your bags, check out of the first Airbnb, and hit the road early for the scenic drive to Key West.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🏝️</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">11:00 AM - 4:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Key West Exploration</h3>
+                            <p class="text-gray-600 mt-2">Explore the island's highlights: <a href="https://maps.app.goo.gl/j14E4V6W27HqD6b28" target="_blank" class="text-blue-500 hover:underline">Southernmost Point</a>, <a href="https://maps.app.goo.gl/H4y4G9yN2H23W4t38" target="_blank" class="text-blue-500 hover:underline">Duval Street</a>, and key lime pie.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🌇</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">4:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Drive Back to Miami</h3>
+                            <p class="text-gray-600 mt-2">Begin the 4-hour drive back to Miami.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🏡</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">8:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">New Home Base</h3>
+                            <p class="text-gray-600 mt-2">Arrive in Miami and check into your second Airbnb.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🍕</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">9:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Relaxed Dinner</h3>
+                            <p class="text-gray-600 mt-2">It's been a long day. Order some pizza or find a low-key local spot for dinner and call it a night.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 5: Tuesday, Sep 9 -->
+            <div id="day5" class="day-content space-y-8 hidden">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-700">Day 5: Pools, Palaces & Gardens 🏛️</h2>
+                    <p class="text-md text-gray-500">Tuesday, September 9th</p>
+                </div>
+                <div class="relative">
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🌊</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">10:00 AM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Venetian Pool</h3>
+                            <p class="text-gray-600 mt-2">Experience a one-of-a-kind swimming spot at the beautiful, historic <a href="https://maps.app.goo.gl/7e29gq5o5D3wP54M8" target="_blank" class="text-blue-500 hover:underline">Venetian Pool</a> in Coral Gables.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🥗</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">1:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Lunch in Coral Gables</h3>
+                            <p class="text-gray-600 mt-2">Enjoy lunch in the beautiful area of Coral Gables.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🌳</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">2:30 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Deering Estate</h3>
+                            <p class="text-gray-600 mt-2">Explore the stunning <a href="https://maps.app.goo.gl/35K3fP5e656yW4pS8" target="_blank" class="text-blue-500 hover:underline">Deering Estate</a>, a 444-acre environmental and archaeological preserve.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">😌</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">5:00 PM onwards</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Evening Downtime</h3>
+                            <p class="text-gray-600 mt-2">Relax and recharge before the evening activity.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">✨</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">8:30 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Night of Lights</h3>
+                            <p class="text-gray-600 mt-2">Visit <a href="https://maps.app.goo.gl/V8Xg4pB5hC48QYfU9" target="_blank" class="text-blue-500 hover:underline">Pinecrest Gardens</a> to experience their magical light displays (check schedule for event dates).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 6: Wednesday, Sep 10 -->
+            <div id="day6" class="day-content space-y-8 hidden">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-700">Day 6: Conference & 24/7 Fun 💼</h2>
+                    <p class="text-md text-gray-500">Wednesday, September 10th</p>
+                </div>
+                <div class="relative">
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">👨‍💻</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">Daytime</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Conference</h3>
+                            <p class="text-gray-600 mt-2">Attend conference sessions during the day.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🍴</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">7:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Dinner</h3>
+                            <p class="text-gray-600 mt-2">Enjoy dinner in the Downtown or Brickell area.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🃏</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">11:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">E11EVEN Miami</h3>
+                            <p class="text-gray-600 mt-2">After the conference, experience the unique 24/7 "ultraclub" that is <a href="https://maps.app.goo.gl/YfB54hK1q5uN1c1z7" target="_blank" class="text-blue-500 hover:underline">E11EVEN Miami</a>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 7: Thursday, Sep 11 -->
+            <div id="day7" class="day-content space-y-8 hidden">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-700">Day 7: Conference & Sunset Beach Club 🌅</h2>
+                    <p class="text-md text-gray-500">Thursday, September 11th</p>
+                </div>
+                <div class="relative">
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">👨‍💻</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">Daytime</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Conference</h3>
+                            <p class="text-gray-600 mt-2">Attend conference sessions during the day.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🥂</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">6:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Nikki Beach</h3>
+                            <p class="text-gray-600 mt-2">For your last night, head to <a href="https://maps.app.goo.gl/1U7w8H1iXJ33tWkXA" target="_blank" class="text-blue-500 hover:underline">Nikki Beach</a> for a chic, sunset beach club vibe.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🍽️</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">8:30 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Farewell Dinner</h3>
+                            <p class="text-gray-600 mt-2">Enjoy a final group dinner in the sophisticated South of Fifth neighborhood.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 8: Friday, Sep 12 -->
+            <div id="day8" class="day-content space-y-8 hidden">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-700">Day 8: Last Taste of Miami & Departure 👋</h2>
+                    <p class="text-md text-gray-500">Friday, September 12th</p>
+                </div>
+                <div class="relative">
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🛍️</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">Morning</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Last-Minute Souvenirs</h3>
+                            <p class="text-gray-600 mt-2">Do some last-minute gift shopping or take one last walk on the beach.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12 pb-8">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">🍔</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">12:00 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Final Lunch</h3>
+                            <p class="text-gray-600 mt-2">Have one last Miami meal before heading out.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item relative pl-12">
+                        <div class="timeline-icon absolute left-0 top-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">✈️</div>
+                        <div class="bg-white p-5 rounded-lg shadow-md border border-gray-100">
+                            <p class="text-sm font-semibold text-gray-500">1:30 PM</p>
+                            <h3 class="text-lg font-semibold text-gray-800 mt-1">Departure</h3>
+                            <p class="text-gray-600 mt-2">Head to MIA for your 4:00 PM flight to NYC.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navButtons = document.querySelectorAll('.nav-button');
+            const dayContents = document.querySelectorAll('.day-content');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-target');
+
+                    navButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    button.classList.add('active');
+
+                    dayContents.forEach(content => {
+                        if (content.id === targetId) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
